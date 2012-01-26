@@ -10,6 +10,10 @@ gem 'json'
 gem 'mogli'
 gem "thumbs_up"
 
+
+gem "ruby-debug"
+
+
 gem "formtastic"
 gem "friendly_id", '3.3.1'
 gem 'will_paginate'
@@ -38,7 +42,7 @@ gem 'i18n_backend_database', :git => "git://github.com/chewbranca/i18n_backend_d
 # JVD: Use this when developing, checkout the i18n_backend_database to ../
 # gem 'i18n_backend_database', :path => "../i18n_backend_database"
 
-gem "hoptoad_notifier"
+#gem "hoptoad_notifier"
 gem "acts-as-taggable-on"
 
 gem 'redis-store'
@@ -82,7 +86,7 @@ end
 
 group :production do
   gem "unicorn"
-  gem "newrelic_rpm"
+  #gem "newrelic_rpm"
 end
 
 #group :assets do
