@@ -1579,56 +1579,69 @@ body div.jGrowl div.jGrowl-closer
     width: auto
   form.formtastic
     padding: $ninesixty_gutter_width / 2 0 0 0
-    fieldset
-      margin-bottom: $ninesixty_gutter_width / 2
-      &.share-story-input
-        +grid(6)
-        +alpha()
-      &.share-story-submit
-        padding: 0
-        border: 0
-        +grid(2)
-        +omega()
-        input
-          margin: 0
-      .post-input-wrap
-        +grid(5)
-        +omega()
+    fieldset.form-desc
+  #sharing_box
+    margin-bottom: $ninesixty_gutter_width / 2
+    &.share-story-input
+      +grid(6)
+      +alpha()
+    &.share-story-submit
+      padding: 0
+      border: 0
+      +grid(2)
+      +omega()
+      input
+        margin: 0
+    .post-input-wrap
+      +grid(5)
+      +omega()
+  #media
+    fieldset.titles
+      float: right
+      width: 70%
+      input
+        float: left
+      #content_caption
+        width: 100%
+      #display_url
+        font-weight: bold
+        font-color: #666
+        font-size: 12px
+        margin-left: 6px
+    .media.inputs, .media_content
+      float: left
+      width: 100%
+    .hidden_image_form, .image-fieldset 
+      display: none
+    #scrollbox
+      width: 30%
+      floar:left
       .img-rotator-wrap
-        +grid(3)
+        width: 100%
         +alpha()
-        .img-viewport-wrap, .no-img-input
-          +grid(3)
-          +alpha()
-          +omega()
-        .img-viewport-wrap
-          padding-top: 10px
-          position: relative
-          .img-viewport
-            min-height: 100px
-            background: #fff
-            margin-bottom: 30px
-          .img-rotate-btn
-            height: 20px
-            width: 20px
-            display: block
-            position: absolute
-            text-align: center
-            bottom: 0px
-            &.prev
-              background: image_url("site/ir-arrows.png") top left no-repeat
-              left: 10px
-              &:hover
-                background-position: bottom left
-            &.next
-              background: image_url("site/ir-arrows.png") top right no-repeat
-              right: 10px
-              &:hover
-                background-position: bottom right
-
-        .no-img-input
-          padding: 10px 0
+        .scrollable
+          width: 130px
+        .img-rotate-btn
+          height: 20px
+          width: 20px
+          display: block
+          position: absolute
           text-align: center
+          bottom: 0px
+          &.prev
+            background: image_url("site/ir-arrows.png") top left no-repeat
+            left: 10px
+            &:hover
+              background-position: bottom left
+          &.next
+            background: image_url("site/ir-arrows.png") top right no-repeat
+            right: 10px
+            &:hover
+              background-position: bottom right
+
+      .no-img-input
+        padding: 10px 0
+        text-align: center
 
 
 // External Header Widget

@@ -1,0 +1,143 @@
+:javascript
+  $(function() {
+    $('#media .media_content').each(function(){
+      $(this).hide();
+    });
+    $('.toggle-embed-video').click(function(event) {
+      event.preventDefault();
+      $('#media .video').show();
+      $(this).remove();
+    });
+    $('.toggle-embed-audio').click(function(event) {
+      event.preventDefault();
+      $('#media .audio').show();
+      $(this).remove();
+    });
+
+    var index = 0;
+    var count = 0;
+
+    $('#parse_url_button').click(function(event){
+      event.preventDefault();
+      url_bar = $('form.post_story #content_url');
+      if (url_bar.val() != '') {
+        url_bar.addClass('process');
+        $('#content_title').addClass('process');
+        $('#sharing_box .loader').show();
+        $.ajax({
+          type: "POST",
+          url: "/stories/parse_page", 
+          data: {url: url_bar.val()},
+          dataType: "json",
+          success: function(data, textStatus) {
+            if ($('#content_title').val() == '') {
+              $('#content_title').val(data.title);
+            }
+            if (data.description) {
+              if ($('#content_caption').val() == '') {
+                $('#content_caption').val(data.description);
+              }
+            }
+            if (data.images.length > 0) {
+              // Hack to make this work in chrome..
+              // can't use your typical itemLoadCallback
+              $("#scrollbox").show();
+              count = data.images.length;
+              $(".scrollable").scrollable();
+              
+              var api = $(".scrollable").data("scrollable");
+              jQuery.each(data.images, function(i, url) {
+                api.addItem('<img src="'+url+'" width="75" height="75" />');
+              });
+              $(".items img").click(function() {
+                if($('.image-url-input').length != 0){
+                  $('.image-url-input').each(function(){$(this).parent().find('.delete_image').click();});}
+                $('#add_image').click();
+                $('.image-url-input').last().val($(this).attr('src'));
+                $('.image-url-input').last().parent().next().remove();
+                $('.image-url-input').last().next().remove();
+                $('.image-url-input').last().after($('.delete_image').last());
+              });
+              $($(".items img")[0]).click();
+            }else{
+              $('#media .titles').css({'width': '100%'});
+            }
+            $('#content_url').removeClass('process');
+            $('#content_title').removeClass('process');
+            $('#display_url').html(url_bar.val());
+            $('#sharing_box').hide();
+            $('#media').show();
+          },
+          error: function(xhr, status, errorThrown) {
+            var result = $.parseJSON(xhr.responseText);
+            alert(result.error);
+            $('#content_url').removeClass('process');
+            $('#content_title').removeClass('process');
+          }
+        });
+      }
+      return false;
+    });
+    $(".no-img-input input").click(function(event){
+      if(event.currentTarget.checked){
+        $('.image-url-input').each(function(){$(this).parent().find('.delete_image').click();})}
+      else
+        $($(".items img")[index]).click();
+    });
+    $(".prev.img-rotate-btn").live('click', function(){
+      index = index == 0 ? 0 : index - 1;
+      $($(".items img")[index]).click();
+      console.debug(index)
+      return false;
+    });
+
+    $(".next.img-rotate-btn").live('click', function(){
+      index = index == count ? count : index + 1;
+      $($(".items img")[index]).click();
+      console.debug(index)
+      return false;
+    });
+  });
+#flowplayer-block
+  - semantic_form_for story, :url => stories_path, :html => { :multipart => true, :class => "post_story" } do |form|
+    .simple-post-wrap.clearfix
+      .close-btn
+      .simple-post
+        .panel-bar
+          %h2 Simple Posting Widget
+        %form.formtastic
+          %fieldset.form-desc
+            %p Share a Story
+            #sharing_box
+              -form.inputs do
+                =form.input :url
+              .loader{:style => "display:block;background:url('/images/site/spinner.gif');height:11px;width:16px;float:right;margin-right:12px;display:none;"}
+              - form.buttons do
+                = form.commit_button 'Look up!', :class => "float-right", :button_html => {:id => "parse_url_button",  :class => 'button-input next create' }
+            #media{:style => "display:none"}
+              - form.inputs :class => "inputs titles" do
+                = form.input :title
+                %p#display_url
+                = form.input :caption, :input_html => { :rows => '3', :cols => '20' }
+              .hidden_image_form
+                =add_image_simple(form)
+              #scrollbox
+                .img-rotator-wrap
+                  %a.prev.browse.img-rotate-btn
+                  .scrollable
+                    .items
+                  %a.next.browse.img-rotate-btn
+                  .no-img-input
+                    %label
+                      %input{ :type => 'checkbox', :id => "no_image"}
+                      No Image
+              %p
+              %fieldset.media.inputs
+                %ol
+                  %li
+                    %a.media-link.toggle-embed-video Add Video
+                  %li
+                    %a.media-link.toggle-embed-audio Add Audio
+              = render :partial => 'shared/forms/media_items_simple', :locals => { :form => form, :item => story }
+              - form.buttons do
+                = form.commit_button t('wizard.post_now'), :class => 'float-right', :button_html => { :class => 'button-input' }
